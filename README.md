@@ -18,6 +18,7 @@ This workspace turns the product strategy in [PLAN.md](PLAN.md) into reusable op
 ## Included assets
 
 - [Use Case Matrix](docs/use-case-matrix.md)
+- [Architecture](docs/architecture.md)
 - [Positioning](docs/positioning.md)
 - [Demo Script](docs/demo-script.md)
 - [Prompt Templates](docs/prompts.md)
