@@ -22,6 +22,14 @@ Running the demo builder produces:
 
 ```bash
 node scripts/build_executive_briefing_demo.mjs
+npm test
 ```
 
 Artifacts are written to `outputs/executive-briefing-machine-demo/`.
+
+## What this now proves
+
+- the workflow runs end to end on sample inputs
+- the ingestion layer is structured as connector-ready adapters
+- the synthesis logic is reusable and testable
+- the artifact outputs are generated from that pipeline, not from a one-off script blob

@@ -1,5 +1,9 @@
 {
   "name": "codex-non-coding-workflows",
   "private": true,
-  "type": "module"
+  "type": "module",
+  "scripts": {
+    "build:executive-demo": "node scripts/build_executive_briefing_demo.mjs",
+    "test": "node --test tests/*.test.mjs"
+  }
 }

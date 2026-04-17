@@ -2,7 +2,7 @@
 
 Audience: founder or business lead reviewing a monthly operating update.
 
-Objective: convert sample collaboration updates and KPI inputs into an executive-ready briefing pack.
+Objective: convert sample collaboration updates and KPI inputs into an executive-ready briefing pack through a connector-ready orchestration layer.
 
 Slide list:
 1. Headline and operating readout

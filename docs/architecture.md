@@ -112,3 +112,30 @@ flowchart LR
 - The first diagram shows what is already real in this repo.
 - The second diagram shows the credible next step without pretending it already exists.
 - Together they make the maturity gap explicit: prototype today, connected workflow later.
+
+## What Is Implemented Now
+
+The repo now contains a partial build of the integrated architecture for the `Executive Briefing Machine`:
+
+- `src/executive-briefing/adapters.mjs`
+  Maps sample inputs into connector-ready adapter contracts for Slack, GitHub, KPI files, local notes, and a `computer-use`-aligned UI capture stub.
+- `src/executive-briefing/pipeline.mjs`
+  Assembles context and synthesizes the executive briefing narrative.
+- `src/executive-briefing/artifacts.mjs`
+  Generates native editable Excel and PowerPoint artifacts.
+- `tests/executive-briefing.test.mjs`
+  Verifies ingestion, synthesis, and artifact generation end to end.
+
+## Mapping To Current Codex Features
+
+- Slack / GitHub connectors: represented by adapter contracts and sample-backed adapters
+- `computer-use`: represented by the UI-capture adapter stub for dashboard-only systems
+- native `Excel`: used for the KPI workbook output
+- native `PowerPoint`: used for the executive briefing deck
+- automation-ready orchestration: represented by the reusable pipeline boundary and testable entrypoint
+
+## Remaining Work For The Full Target
+
+- swap sample adapters for live connector-backed adapters
+- add a real `computer-use` capture path for dashboard and portal extraction
+- trigger the pipeline from recurring automations instead of only local script runs

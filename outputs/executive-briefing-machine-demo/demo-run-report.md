@@ -3,6 +3,14 @@
 Demo: Executive Briefing Machine
 Run date: 2026-04-17
 
+## What this implements from the integrated architecture
+
+- connector-ready adapters for Slack, GitHub, KPI files, and local notes
+- a `computer-use`-mapped manual UI capture adapter stub for UI-only sources
+- a reusable orchestration and synthesis layer
+- native editable Excel and PowerPoint outputs
+- a testable pipeline boundary that can be scheduled or automated later
+
 ## Input files
 
 - /Users/ln-mini/Downloads/for_codex_super_use_cases/demo/executive-briefing-machine/inputs/slack_updates.md
@@ -10,34 +18,26 @@ Run date: 2026-04-17
 - /Users/ln-mini/Downloads/for_codex_super_use_cases/demo/executive-briefing-machine/inputs/leadership_notes.md
 - /Users/ln-mini/Downloads/for_codex_super_use_cases/demo/executive-briefing-machine/inputs/kpis.csv
 
-## What this proves
-
-- The workflow can start from raw collaboration-style updates and KPI files.
-- It can synthesize a briefing headline, a narrative, highlights, risks, and asks.
-- It can generate editable Excel and PowerPoint outputs from those inputs.
-
 ## Output files
 
 - /Users/ln-mini/Downloads/for_codex_super_use_cases/outputs/executive-briefing-machine-demo/executive-briefing-demo.xlsx
 - /Users/ln-mini/Downloads/for_codex_super_use_cases/outputs/executive-briefing-machine-demo/executive-briefing-demo.pptx
 - /Users/ln-mini/Downloads/for_codex_super_use_cases/outputs/executive-briefing-machine-demo/briefing-summary.md
+- /Users/ln-mini/Downloads/for_codex_super_use_cases/outputs/executive-briefing-machine-demo/demo-run-report.md
+- /Users/ln-mini/Downloads/for_codex_super_use_cases/outputs/executive-briefing-machine-demo/narrative_plan.md
+
+## Integration status
+
+- slack: implemented (Slack-ready connector contract)
+- github: implemented (GitHub-ready connector contract)
+- local-notes: implemented (Local document ingestion)
+- kpi-file: implemented (Spreadsheet/file ingestion)
+- computer-use: stubbed (computer-use for UI-only dashboards and internal tools)
 
 ## Derived headline
 
 Growth and efficiency improved this month, with reliability still the main watch item.
 
-## Derived highlights
-
-- Growth team rolled out the onboarding checklist experiment to 40% of new workspaces and activation improved by 6 percentage points in the pilot group.
-- Northstar expanded to an annual plan, adding $48k ARR after the joint sales and success push closed this week.
-- Self-serve analytics export shipped to general availability after the final rollout guardrails cleared.
-
-## Derived risks
-
-- Two enterprise deals are blocked on security questionnaire turnaround and legal review.
-- The iOS 3.12 release introduced a crash regression affecting 4.7% of mobile sessions.
-- The mobile crash regression fix is still waiting on final QA signoff.
-
 ## Caveat
 
-This is a sample-input demo built from local files, not a live connected-system run.
+This is a connector-ready prototype that still uses sample local inputs instead of live Slack, GitHub, dashboard, or automation runs.

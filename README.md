@@ -12,8 +12,25 @@ This workspace turns the product strategy in [PLAN.md](PLAN.md) into reusable op
 ## Start Here
 
 - Read the [Executive Briefing Machine Demo](demo/executive-briefing-machine/README.md) for the real end-to-end sample-input prototype.
+- Read [docs/architecture.md](docs/architecture.md) for the current-vs-target architecture and what is now implemented from the integrated design.
 - Read [TESTING.md](TESTING.md) for build and verification notes.
 - Use [scripts/build_executive_briefing_demo.mjs](scripts/build_executive_briefing_demo.mjs) to regenerate the demo outputs.
+
+## Integrated Build Progress
+
+The repo now implements a meaningful part of the integrated target architecture for the `Executive Briefing Machine`:
+
+- connector-ready adapters for Slack-like updates, GitHub-like updates, KPI files, and local notes
+- a `computer-use`-mapped adapter stub for UI-only sources
+- a reusable orchestration and synthesis layer under `src/executive-briefing/`
+- native editable `Excel` and `PowerPoint` outputs
+- a test suite that validates ingestion, synthesis, and artifact generation
+
+What is still not implemented:
+
+- live Slack, Teams, or GitHub connector calls from repo code
+- live `computer-use` capture sessions
+- scheduled automation runs wired into the pipeline
 
 ## Included assets
 
@@ -36,6 +53,8 @@ Run the builders to regenerate the editable artifacts:
 
 ```bash
 ./scripts/build_all.sh
+npm run build:executive-demo
+npm test
 ```
 
 Outputs are written to `outputs/product-strategy/`.
