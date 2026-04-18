@@ -336,6 +336,13 @@ export async function buildDeckFile(data, deckPath) {
   await pptx.save(deckPath);
 }
 
+function markdownList(items, fallback) {
+  if (!items.length) {
+    return `- ${fallback}`;
+  }
+  return `- ${items.join("\n- ")}`;
+}
+
 export async function writeSummary(data, summaryPath) {
   const text = `# Executive Briefing Summary
 
@@ -352,15 +359,15 @@ ${data.headline}
 
 ## Highlights
 
-- ${data.highlights.join("\n- ")}
+${markdownList(data.highlights, "No high-signal highlights were captured from live Slack or GitHub inputs in this run.")}
 
 ## Risks
 
-- ${data.risks.join("\n- ")}
+${markdownList(data.risks, "No live risk update cleared the Slack and GitHub signal filters in this run.")}
 
 ## Immediate asks
 
-- ${data.asks.join("\n- ")}
+${markdownList(data.asks, "No immediate asks were detected from the live source mix in this run.")}
 `;
   await fs.mkdir(path.dirname(summaryPath), { recursive: true });
   await fs.writeFile(summaryPath, text, "utf8");

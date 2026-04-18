@@ -13,6 +13,7 @@ This workspace turns the product strategy in [PLAN.md](PLAN.md) into reusable op
 
 - Read the [Executive Briefing Machine Demo](demo/executive-briefing-machine/README.md) for the real end-to-end sample-input prototype.
 - Read [docs/architecture.md](docs/architecture.md) for the current-vs-target architecture and what is now implemented from the integrated design.
+- Read [SETUP.md](SETUP.md) for live Slack and GitHub credential setup.
 - Read [TESTING.md](TESTING.md) for build and verification notes.
 - Use [scripts/build_executive_briefing_demo.mjs](scripts/build_executive_briefing_demo.mjs) to regenerate the demo outputs.
 

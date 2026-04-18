@@ -32,6 +32,24 @@ function signed(value, suffix = "") {
   return `${prefix}${value}${suffix}`;
 }
 
+function takeDistinct(limit, ...groups) {
+  const seen = new Set();
+  const items = [];
+
+  for (const group of groups) {
+    for (const item of group) {
+      if (!item || seen.has(item)) continue;
+      seen.add(item);
+      items.push(item);
+      if (items.length === limit) {
+        return items;
+      }
+    }
+  }
+
+  return items;
+}
+
 export function createSampleExecutiveBriefingAdapters({ inputDir, uiCapturePath = null }) {
   return [
     createMarkdownSectionAdapter({
@@ -146,13 +164,16 @@ export function synthesizeExecutiveBriefing(context, { generatedOn = "2026-04-17
     return acc;
   }, {});
 
-  const highlights = (itemsByKind.highlight || []).slice(0, 3).map((item) => item.text);
-  const risks = (itemsByKind.risk || []).slice(0, 3).map((item) => item.text);
+  const highlightTexts = (itemsByKind.highlight || []).map((item) => item.text);
+  const riskTexts = (itemsByKind.risk || []).map((item) => item.text);
+  const leadershipNotes = (itemsByKind.leadership_note || []).map((item) => item.text);
+  const deliveryNotes = (itemsByKind.delivery_note || []).map((item) => item.text);
+  const highlights = takeDistinct(3, highlightTexts, deliveryNotes, leadershipNotes);
+  const risks = riskTexts.slice(0, 3);
   const asks = [
     ...(itemsByKind.ask || []).slice(0, 2).map((item) => item.text),
-    ...(itemsByKind.leadership_note || []).slice(0, 2).map((item) => item.text),
+    ...leadershipNotes.slice(0, 2),
   ];
-  const deliveryNotes = (itemsByKind.delivery_note || []).map((item) => item.text);
 
   const metrics = [
     { label: "ARR", current: `$${latest.arrK}k`, delta: signed(delta(latest.arrK, previous.arrK), "k vs last month"), tone: "positive" },

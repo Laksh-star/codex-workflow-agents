@@ -1,7 +1,7 @@
 # Demo Run Report
 
 Demo: Executive Briefing Machine
-Run date: 2026-04-18
+Run date: 2026-04-17
 
 ## What this implements from the integrated architecture
 
@@ -28,8 +28,8 @@ Run date: 2026-04-18
 
 ## Integration status
 
-- slack: implemented (Slack-ready connector contract)
-- github: implemented (GitHub-ready connector contract)
+- slack: implemented (Live Slack API adapter for 2 channel(s))
+- github: implemented (Live GitHub API adapter for Laksh-star/codex-workflow-agents)
 - local-notes: implemented (Local document ingestion)
 - kpi-file: implemented (Spreadsheet/file ingestion)
 - computer-use: stubbed (computer-use for UI-only dashboards and internal tools)

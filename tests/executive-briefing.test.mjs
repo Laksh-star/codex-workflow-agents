@@ -48,6 +48,14 @@ test("collects live Slack context when token-backed adapter is provided", async 
       C123: {
         ok: true,
         messages: [
+          { ts: "1713420000.000500", subtype: "channel_join", text: "<@U123> has joined the channel" },
+          {
+            ts: "1713420000.000450",
+            subtype: "bot_message",
+            bot_id: "B123",
+            text: ":satellite_antenna: Pipeline digest processed: 1800 items. Thread below with ranked opportunities.",
+          },
+          { ts: "1713420000.000425", text: "https://x.com/claudeai/status/2045248224659644654?s=20" },
           { ts: "1713420000.000300", text: "Need approval on the enterprise discount by EOD." },
           { ts: "1713420000.000200", text: "Growth experiment beat signup target by 18% this week." },
         ],
@@ -85,6 +93,9 @@ test("collects live Slack context when token-backed adapter is provided", async 
   assert.ok(context.items.some((item) => item.text.includes("exec-updates: Growth experiment beat signup target")));
   assert.ok(context.items.some((item) => item.text.includes("eng-leadership: Blocked on mobile crash fix")));
   assert.ok(context.items.some((item) => item.kind === "ask" && item.text.includes("Need approval")));
+  assert.ok(context.items.every((item) => !item.text.includes("has joined the channel")));
+  assert.ok(context.items.every((item) => !item.text.includes("Pipeline digest processed")));
+  assert.ok(context.items.every((item) => !item.text.includes("https://x.com/claudeai")));
   assert.ok(context.integrations.some((integration) => integration.status === "implemented" && integration.source === "slack"));
 });
 

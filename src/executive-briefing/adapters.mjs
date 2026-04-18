@@ -236,11 +236,18 @@ function normalizeSlackText(text) {
     .trim();
 }
 
+const slackRiskPattern = /\b(blocked|blocker|risk|incident|sev[- ]?1|outage|latency|security|bug|slip|delay|escalat|hotfix|crash)\b/i;
+const slackAskPattern = /\b(need|please|decision|approve|approval|help|review|required|owner|can someone|by eod|unblock)\b/i;
+const slackBusinessPattern =
+  /\b(arr|nrr|pipeline|revenue|renewal|churn|customer|enterprise|deal|burn|budget|forecast|launch|shipping|release|rollout|activation|signup|trial|growth|retention|reliability|roadmap|support|legal|security)\b/i;
+const slackNoisePattern =
+  /\b(has joined the channel|joined the channel|left the channel|invite @|set the channel|renamed the channel|archived the channel|unarchived the channel|thread below|processed:\s*\d|data scanned:|window:|verticals covered:)\b/i;
+
 function classifySlackMessage(text) {
-  if (/\b(blocked|blocker|risk|incident|sev[- ]?1|outage|latency|security|bug|slip|delay|escalat)/i.test(text)) {
+  if (slackRiskPattern.test(text)) {
     return "risk";
   }
-  if (/\b(need|please|decision|approve|approval|help|review|required|owner|can someone|by eod)\b/i.test(text)) {
+  if (slackAskPattern.test(text)) {
     return "ask";
   }
   return "highlight";
@@ -250,6 +257,48 @@ function slackSectionLabel(kind) {
   if (kind === "risk") return "Slack Risks";
   if (kind === "ask") return "Slack Asks";
   return "Slack Highlights";
+}
+
+function isSlackSystemMessage(message) {
+  const subtype = String(message?.subtype || "");
+  return [
+    "bot_message",
+    "channel_join",
+    "channel_leave",
+    "channel_topic",
+    "channel_purpose",
+    "channel_name",
+    "channel_archive",
+    "channel_unarchive",
+    "channel_posting_permissions",
+    "group_join",
+    "group_leave",
+    "message_changed",
+    "message_deleted",
+  ].includes(subtype);
+}
+
+function scoreSlackMessage(message, text) {
+  let score = 0;
+  const isLinkOnly = /^(https?:\/\/\S+|www\.\S+)$/i.test(text);
+  const alphaChars = (text.match(/[a-z]/gi) || []).length;
+
+  if (!isSlackSystemMessage(message) && !message?.bot_id && !message?.app_id) {
+    score += 3;
+  } else {
+    score -= 4;
+  }
+
+  if (slackRiskPattern.test(text)) score += 3;
+  if (slackAskPattern.test(text)) score += 2;
+  if (slackBusinessPattern.test(text)) score += 2;
+  if (slackNoisePattern.test(text)) score -= 6;
+  if (text.length > 450) score -= 3;
+  if ((text.match(/\n/g) || []).length > 4) score -= 2;
+  if (isLinkOnly) score -= 6;
+  if (alphaChars < 20) score -= 3;
+
+  return score;
 }
 
 export function createSlackApiAdapter({
@@ -320,9 +369,13 @@ export function createSlackApiAdapter({
       const items = channelPayloads
         .flatMap(({ channel, messages }) =>
           messages
-            .filter((message) => normalizeSlackText(message.text))
             .map((message) => {
               const text = normalizeSlackText(message.text);
+              const score = scoreSlackMessage(message, text);
+              if (!text || score < 2) {
+                return null;
+              }
+
               const kind = classifySlackMessage(text);
               return {
                 adapterId: id,
@@ -332,12 +385,14 @@ export function createSlackApiAdapter({
                 section: slackSectionLabel(kind),
                 text: `${channel.label}: ${text}`,
                 ts: Number(message.ts || 0),
+                score,
               };
-            }),
+            })
+            .filter(Boolean),
         )
-        .sort((left, right) => right.ts - left.ts)
-        .slice(0, 9)
-        .map(({ ts, ...item }) => item);
+        .sort((left, right) => right.score - left.score || right.ts - left.ts)
+        .slice(0, 6)
+        .map(({ ts, score, ...item }) => item);
 
       return {
         items,
