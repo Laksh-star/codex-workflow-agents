@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Codex Workflow Agents</title>
+    <style>
+      :root {
+        --bg: #f7f4ec;
+        --paper: rgba(255, 252, 246, 0.92);
+        --ink: #18212d;
+        --muted: #5a6675;
+        --line: rgba(24, 33, 45, 0.12);
+        --blue: #1d4ed8;
+        --teal: #0f766e;
+        --amber: #d97706;
+        --rose: #be185d;
+        --shadow: 0 18px 50px rgba(24, 33, 45, 0.08);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        font-family: Georgia, "Times New Roman", serif;
+        color: var(--ink);
+        background:
+          radial-gradient(circle at top left, rgba(29, 78, 216, 0.08), transparent 28%),
+          radial-gradient(circle at bottom right, rgba(15, 118, 110, 0.08), transparent 24%),
+          linear-gradient(180deg, #fbfaf6 0%, var(--bg) 100%);
+      }
+
+      a {
+        color: inherit;
+      }
+
+      .wrap {
+        width: min(1120px, calc(100vw - 32px));
+        margin: 0 auto;
+      }
+
+      .hero {
+        padding: 56px 0 32px;
+      }
+
+      .eyebrow {
+        display: inline-block;
+        padding: 8px 12px;
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        font: 600 12px/1.1 ui-monospace, SFMono-Regular, Menlo, monospace;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        background: rgba(255, 255, 255, 0.58);
+      }
+
+      h1,
+      h2,
+      h3 {
+        margin: 0;
+        line-height: 1;
+      }
+
+      h1 {
+        margin-top: 18px;
+        font-size: clamp(40px, 7vw, 84px);
+        letter-spacing: -0.04em;
+        max-width: 10ch;
+      }
+
+      .lede {
+        max-width: 760px;
+        margin-top: 18px;
+        font-size: clamp(18px, 2.3vw, 24px);
+        line-height: 1.45;
+        color: var(--muted);
+      }
+
+      .hero-grid {
+        display: grid;
+        grid-template-columns: 1.4fr 0.9fr;
+        gap: 24px;
+        margin-top: 36px;
+      }
+
+      .panel,
+      .card,
+      .step,
+      .metric {
+        background: var(--paper);
+        border: 1px solid var(--line);
+        border-radius: 24px;
+        box-shadow: var(--shadow);
+      }
+
+      .panel {
+        padding: 24px;
+      }
+
+      .panel h2 {
+        font-size: 18px;
+        letter-spacing: -0.02em;
+      }
+
+      .panel p,
+      .card p,
+      .step p,
+      .matrix p {
+        margin: 0;
+        color: var(--muted);
+        line-height: 1.55;
+      }
+
+      .source-grid,
+      .metric-grid,
+      .link-grid,
+      .step-grid {
+        display: grid;
+        gap: 14px;
+      }
+
+      .source-grid {
+        margin-top: 18px;
+      }
+
+      .metric-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+
+      .metric {
+        padding: 18px;
+      }
+
+      .metric strong {
+        display: block;
+        font-size: 13px;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: var(--muted);
+      }
+
+      .metric span {
+        display: block;
+        margin-top: 10px;
+        font-size: 28px;
+        letter-spacing: -0.04em;
+      }
+
+      .source {
+        display: grid;
+        grid-template-columns: 140px 1fr;
+        gap: 18px;
+        padding: 16px 0;
+        border-top: 1px solid var(--line);
+      }
+
+      .source:first-child {
+        border-top: 0;
+        padding-top: 0;
+      }
+
+      .badge {
+        width: fit-content;
+        padding: 7px 10px;
+        border-radius: 999px;
+        font: 700 12px/1 ui-monospace, SFMono-Regular, Menlo, monospace;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+      }
+
+      .live {
+        background: rgba(29, 78, 216, 0.12);
+        color: var(--blue);
+      }
+
+      .curated {
+        background: rgba(217, 119, 6, 0.14);
+        color: var(--amber);
+      }
+
+      .stubbed {
+        background: rgba(90, 102, 117, 0.12);
+        color: #475569;
+      }
+
+      .section {
+        padding: 22px 0 12px;
+      }
+
+      .section-head {
+        display: flex;
+        align-items: end;
+        justify-content: space-between;
+        gap: 16px;
+        margin-bottom: 18px;
+      }
+
+      .section-head h2 {
+        font-size: clamp(28px, 4vw, 48px);
+        letter-spacing: -0.04em;
+      }
+
+      .section-head p {
+        max-width: 540px;
+        color: var(--muted);
+        line-height: 1.55;
+      }
+
+      .link-grid,
+      .step-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+
+      .card,
+      .step {
+        padding: 22px;
+      }
+
+      .card h3,
+      .step h3 {
+        font-size: 24px;
+        letter-spacing: -0.03em;
+        margin-bottom: 12px;
+      }
+
+      .card a,
+      .step a {
+        text-decoration: none;
+      }
+
+      .card a span,
+      .step a span {
+        display: inline-block;
+        margin-top: 16px;
+        color: var(--blue);
+        font-weight: 700;
+      }
+
+      .flow {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 14px;
+      }
+
+      .flow .step {
+        position: relative;
+        min-height: 170px;
+      }
+
+      .flow .step::after {
+        content: "→";
+        position: absolute;
+        top: 20px;
+        right: -10px;
+        font-size: 24px;
+        color: var(--line);
+      }
+
+      .flow .step:last-child::after {
+        display: none;
+      }
+
+      .footer {
+        padding: 28px 0 56px;
+        color: var(--muted);
+        font-size: 14px;
+      }
+
+      @media (max-width: 980px) {
+        .hero-grid,
+        .metric-grid,
+        .link-grid,
+        .step-grid,
+        .flow {
+          grid-template-columns: 1fr;
+        }
+
+        .flow .step::after {
+          display: none;
+        }
+      }
+
+      @media (max-width: 640px) {
+        .source {
+          grid-template-columns: 1fr;
+          gap: 10px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="wrap">
+      <section class="hero">
+        <span class="eyebrow">Codex Workflow Agents</span>
+        <h1>Business workflow demos that actually run.</h1>
+        <p class="lede">
+          This repo shows a user-facing hybrid workflow built on top of Codex. The current demo is an
+          <strong>Executive Briefing Machine</strong> for a boutique AI advisory firm, combining live Slack, live GitHub,
+          curated business context, scheduled execution, and editable Excel and PowerPoint outputs.
+        </p>
+
+        <div class="hero-grid">
+          <div class="panel">
+            <h2>Current demo shape</h2>
+            <div class="source-grid">
+              <div class="source">
+                <div><span class="badge live">Live</span></div>
+                <p><strong>Slack</strong><br />Reads a seeded advisory channel with realistic updates, asks, blockers, and customer signals.</p>
+              </div>
+              <div class="source">
+                <div><span class="badge live">Live</span></div>
+                <p><strong>GitHub</strong><br />Reads merged PRs, open PRs, and roadmap issues directly from the repo.</p>
+              </div>
+              <div class="source">
+                <div><span class="badge curated">Curated</span></div>
+                <p><strong>KPI data</strong><br />Uses a boutique AI advisory KPI model designed to simulate a real operating review.</p>
+              </div>
+              <div class="source">
+                <div><span class="badge curated">Curated</span></div>
+                <p><strong>Leadership framing</strong><br />Uses explicit board and execution framing tuned to the advisory business story.</p>
+              </div>
+              <div class="source">
+                <div><span class="badge stubbed">Stubbed</span></div>
+                <p><strong>computer-use</strong><br />Architecture path exists for dashboards and portals, but is not live in this repo yet.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="metric-grid">
+            <div class="metric">
+              <strong>Workflow</strong>
+              <span>Executive Briefing Machine</span>
+            </div>
+            <div class="metric">
+              <strong>Mode</strong>
+              <span>Hybrid demo</span>
+            </div>
+            <div class="metric">
+              <strong>Outputs</strong>
+              <span>XLSX · PPTX · MD</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="section-head">
+          <h2>What it does</h2>
+          <p>
+            The demo collects operating context, classifies the signal, synthesizes the business narrative, and emits
+            editable deliverables instead of stopping at a text summary.
+          </p>
+        </div>
+
+        <div class="flow">
+          <div class="step">
+            <h3>1. Collect</h3>
+            <p>Pulls live Slack and GitHub context, plus curated KPI and leadership inputs.</p>
+          </div>
+          <div class="step">
+            <h3>2. Classify</h3>
+            <p>Scores highlights, risks, asks, roadmap items, and consulting-specific signals.</p>
+          </div>
+          <div class="step">
+            <h3>3. Synthesize</h3>
+            <p>Builds a headline, operating narrative, and decision-oriented summary.</p>
+          </div>
+          <div class="step">
+            <h3>4. Deliver</h3>
+            <p>Exports an Excel pack, a PowerPoint briefing, a markdown summary, and a run report.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="section-head">
+          <h2>Open the repo</h2>
+          <p>These links are the best entry points for someone coming from a Medium article, launch post, or GitHub profile.</p>
+        </div>
+
+        <div class="link-grid">
+          <article class="card">
+            <h3>README</h3>
+            <p>High-level repo framing, what is live vs curated, and how to run the current demo.</p>
+            <a href="../README.md"><span>Open README</span></a>
+          </article>
+          <article class="card">
+            <h3>Architecture</h3>
+            <p>Three-state architecture view: sample prototype, current hybrid demo, and target integrated workflow.</p>
+            <a href="./architecture.md"><span>Open architecture</span></a>
+          </article>
+          <article class="card">
+            <h3>Setup</h3>
+            <p>Environment variables and run instructions for the live Slack and GitHub paths.</p>
+            <a href="../SETUP.md"><span>Open setup</span></a>
+          </article>
+          <article class="card">
+            <h3>Demo artifacts</h3>
+            <p>Editable outputs from the latest run: workbook, deck, summary, and run report.</p>
+            <a href="../outputs/executive-briefing-machine-demo/briefing-summary.md"><span>Open outputs</span></a>
+          </article>
+          <article class="card">
+            <h3>Testing</h3>
+            <p>Build verification and current validation notes for the demo pipeline.</p>
+            <a href="../TESTING.md"><span>Open testing report</span></a>
+          </article>
+          <article class="card">
+            <h3>Strategy package</h3>
+            <p>The earlier non-coding workflow strategy layer is still in the repo for context and positioning.</p>
+            <a href="./use-case-matrix.md"><span>Open strategy docs</span></a>
+          </article>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="section-head">
+          <h2>Suggested positioning</h2>
+          <p>
+            The strongest honest framing for this repo is not “five production agents.” It is “a working hybrid workflow
+            demo showing how Codex can operate business workflows and produce editable business artifacts.”
+          </p>
+        </div>
+
+        <div class="step-grid">
+          <article class="step">
+            <h3>What is real</h3>
+            <p>Slack and GitHub are live. The pipeline runs end to end. The outputs are real files. The scheduled runner exists.</p>
+          </article>
+          <article class="step">
+            <h3>What is curated</h3>
+            <p>KPI data and leadership framing are intentionally curated to create a stronger and more coherent advisory demo.</p>
+          </article>
+          <article class="step">
+            <h3>What comes next</h3>
+            <p>Replace curated KPI and leadership layers with live sources, then add fail-soft source reporting and dashboard capture.</p>
+          </article>
+        </div>
+      </section>
+
+      <p class="footer">
+        If GitHub Pages is enabled from the <code>docs/</code> folder on <code>main</code>, this page can be linked directly from a
+        Medium article or launch post.
+      </p>
+    </main>
+  </body>
+</html>

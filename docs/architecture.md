@@ -1,13 +1,16 @@
 # Architecture
 
-This repo currently contains two different architecture states:
+This repo now has three meaningful architecture states:
 
-- the **current prototype**, which runs end to end on sample local inputs
-- the **integrated target architecture**, which adds live connectors, `computer-use`, and recurring automation
+1. the **original sample-input prototype**
+2. the **current hybrid live demo**
+3. the **target fully integrated workflow**
 
-## Current Prototype
+That distinction matters because the repo is no longer just a concept package. It now has a real hybrid business workflow running on top of live Slack and GitHub.
 
-This is what exists in the repo today.
+## 1. Original sample-input prototype
+
+This was the first working shape of the `Executive Briefing Machine`.
 
 ```mermaid
 flowchart LR
@@ -19,10 +22,10 @@ flowchart LR
     A["Sample Inputs<br/>Slack notes<br/>GitHub notes<br/>Leadership notes<br/>KPI CSV"]:::source
     B["Codex Prototype Builder<br/>parse + normalize + structure"]:::engine
     C["Narrative Synthesis<br/>headline<br/>highlights<br/>risks<br/>asks"]:::synth
-    D["Excel KPI Pack<br/>editable workbook"]:::output
-    E["PowerPoint Briefing<br/>editable deck"]:::output
-    F["Written Brief<br/>markdown summary"]:::output
-    G["Run Report<br/>demo evidence"]:::output
+    D["Excel KPI Pack"]:::output
+    E["PowerPoint Briefing"]:::output
+    F["Written Summary"]:::output
+    G["Run Report"]:::output
 
     A --> B
     B --> C
@@ -32,9 +35,53 @@ flowchart LR
     B --> G
 ```
 
-## Integrated Target Architecture
+## 2. Current hybrid live demo
 
-This is the expanded version if the prototype is wired to live sources.
+This is the architecture the repo actually implements today.
+
+```mermaid
+flowchart LR
+    classDef live fill:#E0F2FE,stroke:#0284C7,stroke-width:1.5px,color:#0F172A
+    classDef curated fill:#FEF3C7,stroke:#D97706,stroke-width:1.5px,color:#0F172A
+    classDef stub fill:#F1F5F9,stroke:#64748B,stroke-width:1.5px,color:#0F172A
+    classDef engine fill:#DCFCE7,stroke:#059669,stroke-width:1.5px,color:#0F172A
+    classDef output fill:#FCE7F3,stroke:#DB2777,stroke-width:1.5px,color:#0F172A
+
+    S1["Live Slack<br/>seeded advisory channel"]:::live
+    S2["Live GitHub<br/>repo PRs + issues"]:::live
+    S3["Curated KPI CSV<br/>boutique AI firm metrics"]:::curated
+    S4["Curated leadership notes<br/>board and execution framing"]:::curated
+    S5["computer-use path<br/>not live yet"]:::stub
+
+    I1["Adapter layer<br/>Slack + GitHub + file adapters"]:::engine
+    I2["Filtering and classification<br/>advisory-aware scoring"]:::engine
+    I3["Narrative synthesis"]:::engine
+    I4["Scheduled runner"]:::engine
+
+    O1["Excel KPI pack"]:::output
+    O2["PowerPoint briefing deck"]:::output
+    O3["Markdown summary"]:::output
+    O4["Run report"]:::output
+
+    S1 --> I1
+    S2 --> I1
+    S3 --> I1
+    S4 --> I1
+    S5 -.-> I1
+
+    I1 --> I2
+    I2 --> I3
+    I4 --> I3
+
+    I3 --> O1
+    I3 --> O2
+    I3 --> O3
+    I3 --> O4
+```
+
+## 3. Target fully integrated workflow
+
+This is the expanded version if every meaningful source becomes live.
 
 ```mermaid
 flowchart LR
@@ -48,97 +95,86 @@ flowchart LR
         S1["Slack"]:::source
         S2["Teams"]:::source
         S3["GitHub"]:::source
-        S4["Local Docs / Notes"]:::source
-        S5["KPI Sheets / CSV / Warehouse"]:::source
-        S6["Dashboards / CRM / Internal Tools<br/>via computer-use"]:::source
+        S4["Leadership docs / notes"]:::source
+        S5["KPI sheets / warehouse / BI"]:::source
+        S6["Dashboards / CRM / internal tools<br/>via computer-use"]:::source
     end
 
     subgraph I["Ingestion Layer"]
-        I1["Connector Fetchers"]:::ingest
-        I2["computer-use Sessions"]:::ingest
-        I3["Normalization + Extraction"]:::ingest
+        I1["Connector fetchers"]:::ingest
+        I2["computer-use sessions"]:::ingest
+        I3["Normalization + source scoring"]:::ingest
     end
 
     subgraph O["Codex Orchestration"]
-        O1["Context Assembly"]:::orchestration
-        O2["Narrative + Priority Synthesis"]:::orchestration
-        O3["Risk / Ask Detection"]:::orchestration
-        O4["Memory + Thread Context"]:::orchestration
+        O1["Context assembly"]:::orchestration
+        O2["Narrative + priority synthesis"]:::orchestration
+        O3["Risk / ask / opportunity detection"]:::orchestration
+        O4["Confidence + fallback reporting"]:::orchestration
     end
 
     subgraph D["Delivery Layer"]
-        D1["Executive Summary"]:::delivery
-        D2["Excel KPI Pack"]:::delivery
-        D3["PowerPoint Briefing"]:::delivery
-        D4["Slack / Teams Draft Update"]:::delivery
+        D1["Executive summary"]:::delivery
+        D2["Excel KPI pack"]:::delivery
+        D3["PowerPoint briefing"]:::delivery
+        D4["Slack / Teams follow-up"]:::delivery
     end
 
     subgraph A["Automation + Review"]
-        A1["Scheduled Runs"]:::output
-        A2["Heartbeat / Monitoring"]:::output
-        A3["Human Review Checkpoint"]:::output
+        A1["Scheduled runs"]:::output
+        A2["Human review checkpoint"]:::output
+        A3["Audit trail / run report"]:::output
     end
 
     S1 --> I1
     S2 --> I1
     S3 --> I1
-    S4 --> I3
-    S5 --> I3
+    S4 --> I1
+    S5 --> I1
     S6 --> I2
 
     I1 --> I3
     I2 --> I3
     I3 --> O1
-    O4 --> O1
-    A1 --> O1
-    A2 --> O1
 
+    A1 --> O1
     O1 --> O2
     O1 --> O3
+    O1 --> O4
 
     O2 --> D1
     O2 --> D2
     O2 --> D3
     O3 --> D4
-
-    D1 --> A3
-    D2 --> A3
-    D3 --> A3
-    D4 --> A3
+    O4 --> A2
+    O4 --> A3
 ```
 
-## Why both diagrams matter
+## What is real today
 
-- The first diagram shows what is already real in this repo.
-- The second diagram shows the credible next step without pretending it already exists.
-- Together they make the maturity gap explicit: prototype today, connected workflow later.
+- live Slack ingestion
+- live GitHub ingestion
+- curated KPI data
+- curated leadership framing
+- scheduled execution path
+- editable Excel and PowerPoint outputs
 
-## What Is Implemented Now
+## What is still synthetic or incomplete
 
-The repo now contains a partial build of the integrated architecture for the `Executive Briefing Machine`:
+- KPI data is curated, not live from a source-of-truth system
+- leadership framing is curated, not live from a thread or doc source
+- Teams is not wired
+- `computer-use` is only represented as a future path
+- outbound delivery is not yet part of the live run
 
-- `src/executive-briefing/adapters.mjs`
-  Maps sample inputs into connector-ready adapter contracts for Slack, GitHub, KPI files, local notes, and a `computer-use`-aligned UI capture stub. It now also contains live Slack and live GitHub API adapters with sample fallbacks.
-- `src/executive-briefing/pipeline.mjs`
-  Assembles context, selects live-vs-sample adapters based on available credentials, and synthesizes the executive briefing narrative.
-- `src/executive-briefing/artifacts.mjs`
-  Generates native editable Excel and PowerPoint artifacts.
-- `scripts/run_scheduled_executive_briefing.mjs`
-  Provides a schedule-friendly entrypoint that refreshes the full demo output set from the same orchestration layer.
-- `tests/executive-briefing.test.mjs`
-  Verifies sample ingestion, live Slack ingestion, live GitHub ingestion, synthesis, and artifact generation end to end.
+## Why the new middle diagram matters
 
-## Mapping To Current Codex Features
+The old “current prototype” versus “target architecture” split is no longer enough.
 
-- Slack: represented by a live `conversations.history` adapter path plus a sample fallback for demos
-- GitHub: represented by a live repository API adapter path plus a sample fallback for demos
-- `computer-use`: represented by the UI-capture adapter stub for dashboard-only systems
-- native `Excel`: used for the KPI workbook output
-- native `PowerPoint`: used for the executive briefing deck
-- automations: represented by the reusable scheduled runner entrypoint and the Codex automation that can call back into this workspace
+The repo now has a middle state that is the actual product story:
 
-## Remaining Work For The Full Target
+- not fully live
+- not merely mocked
+- a hybrid workflow with real connectors, curated business context, and real deliverables
 
-- add a real `computer-use` capture path for dashboard and portal extraction
-- add Teams ingestion and outbound delivery adapters
-- connect KPI ingestion to a warehouse export or BI source instead of only local CSV files
+That is the state most worth showing in a repo, article, or GitHub Pages landing page.

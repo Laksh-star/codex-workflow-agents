@@ -1,71 +1,92 @@
-# Codex Non-Coding Workflow Package
+# Codex Workflow Agents
 
-Prototype non-coding business workflow agents built on Codex.
+User-facing workflow demos built on top of the latest Codex capabilities.
 
-This workspace turns the product strategy in [PLAN.md](PLAN.md) into reusable operating assets:
+This repo currently centers on one working demo:
 
-- strategy docs for positioning and launch
-- workflow specs for the top 5 non-coding use cases
-- prompt templates for demos and automations
-- editable Excel and PowerPoint artifacts for packaging and storytelling
+- `Executive Briefing Machine`
 
-## Start Here
+It takes a mix of live and curated business inputs, synthesizes an operating narrative, and outputs:
 
-- Read the [Executive Briefing Machine Demo](demo/executive-briefing-machine/README.md) for the real end-to-end sample-input prototype.
-- Read [docs/architecture.md](docs/architecture.md) for the current-vs-target architecture and what is now implemented from the integrated design.
-- Read [SETUP.md](SETUP.md) for live Slack and GitHub credential setup.
-- Read [TESTING.md](TESTING.md) for build and verification notes.
-- Use [scripts/build_executive_briefing_demo.mjs](scripts/build_executive_briefing_demo.mjs) to regenerate the demo outputs.
+- an editable Excel KPI pack
+- an editable PowerPoint briefing deck
+- a written executive summary
+- a run report showing what was live, curated, or stubbed
 
-## Integrated Build Progress
+## What this repo is now
 
-The repo now implements a meaningful part of the integrated target architecture for the `Executive Briefing Machine`:
+This is no longer just a strategy package for non-coding workflows. It now contains a working hybrid business workflow demo for a boutique AI advisory firm:
 
-- connector-ready adapters for Slack updates, GitHub updates, KPI files, and local notes
-- live Slack API ingestion when `SLACK_BOT_TOKEN` and `SLACK_CHANNEL_IDS` are present
-- live GitHub API ingestion when `GITHUB_TOKEN` is present
-- a `computer-use`-mapped adapter stub for UI-only sources
-- a reusable orchestration and synthesis layer under `src/executive-briefing/`
-- native editable `Excel` and `PowerPoint` outputs
-- a scheduled runner entrypoint under `scripts/run_scheduled_executive_briefing.mjs`
-- a test suite that validates ingestion, synthesis, and artifact generation across sample and live-backed adapter paths
+- live Slack ingestion
+- live GitHub ingestion
+- curated KPI data
+- curated leadership framing
+- scheduled rerun support
+- editable business artifacts
 
-What is still not implemented:
+The current demo theme is:
 
-- live Teams connector calls from repo code
-- live `computer-use` capture sessions
-- outbound Slack or Teams posting from the generated briefing
-- warehouse or dashboard-native KPI ingestion beyond local files
+- `Directing Business Consulting Advisory`
+- a boutique AI consulting and advisory firm
 
-## Included assets
+## Live vs curated vs stubbed
 
-- [Use Case Matrix](docs/use-case-matrix.md)
+For the current `Executive Briefing Machine` demo:
+
+| Source | Status | Notes |
+| --- | --- | --- |
+| Slack | Live | Reads a seeded advisory demo channel with realistic operating updates |
+| GitHub | Live | Reads merged PRs, open PRs, and open issues from this repo |
+| KPI data | Curated | Boutique AI advisory metrics in local CSV form |
+| Leadership notes | Curated | Local leadership framing for the advisory storyline |
+| Teams | Stubbed | Not wired yet |
+| `computer-use` dashboard capture | Stubbed | Architecture path exists, live extraction does not |
+
+That makes this an honest **hybrid demo**, not a fully live production workflow.
+
+## Why it matters
+
+The interesting part is not “Codex can summarize text.” The interesting part is that Codex can:
+
+- collect context from real systems
+- synthesize that context into a decision-oriented narrative
+- rerun on a schedule
+- output editable Excel and PowerPoint deliverables
+
+That is the product shape this repo is exploring.
+
+## Start here
+
+- [Live demo overview](docs/index.html)
 - [Architecture](docs/architecture.md)
+- [Executive Briefing Machine demo](demo/executive-briefing-machine/README.md)
+- [Setup](SETUP.md)
+- [Testing](TESTING.md)
+
+## Current artifacts
+
+- [Executive Briefing Demo Workbook](outputs/executive-briefing-machine-demo/executive-briefing-demo.xlsx)
+- [Executive Briefing Demo Deck](outputs/executive-briefing-machine-demo/executive-briefing-demo.pptx)
+- [Executive Briefing Demo Summary](outputs/executive-briefing-machine-demo/briefing-summary.md)
+- [Executive Briefing Demo Run Report](outputs/executive-briefing-machine-demo/demo-run-report.md)
+
+The earlier product-strategy package is still included:
+
+- [Workflow Prioritization Workbook](outputs/product-strategy/codex-non-coding-workflows.xlsx)
+- [Strategy Deck](outputs/product-strategy/codex-non-coding-workflows.pptx)
+- [Use Case Matrix](docs/use-case-matrix.md)
 - [Positioning](docs/positioning.md)
-- [Demo Script](docs/demo-script.md)
 - [Prompt Templates](docs/prompts.md)
-- [Testing Report](TESTING.md)
-- [Chief of Staff Workflow](docs/workflows/chief-of-staff.md)
-- [Executive Briefing Machine Workflow](docs/workflows/executive-briefing-machine.md)
-- [Daily Leadership Digest Workflow](docs/workflows/daily-leadership-digest.md)
-- [Deal Desk Assistant Workflow](docs/workflows/deal-desk-assistant.md)
-- [Customer Voice Aggregator Workflow](docs/workflows/customer-voice-aggregator.md)
-- [Executive Briefing Machine Demo](demo/executive-briefing-machine/README.md)
 
-## Generated deliverables
-
-Run the builders to regenerate the editable artifacts:
+## How to run it
 
 ```bash
-./scripts/build_all.sh
+npm test
 npm run build:executive-demo
 npm run run:scheduled-executive-demo
-npm test
 ```
 
-Outputs are written to `outputs/product-strategy/`.
-
-The executive briefing scripts optionally use these environment variables for live context:
+Live context is optional. The executive briefing scripts can use:
 
 ```bash
 SLACK_BOT_TOKEN=...
@@ -75,29 +96,27 @@ GITHUB_OWNER=Laksh-star
 GITHUB_REPO=codex-workflow-agents
 ```
 
-- [Workflow Prioritization Workbook](outputs/product-strategy/codex-non-coding-workflows.xlsx)
-- [Strategy Deck](outputs/product-strategy/codex-non-coding-workflows.pptx)
-- [Deck Narrative Plan](outputs/product-strategy/narrative_plan.md)
-- [Executive Briefing Demo Workbook](outputs/executive-briefing-machine-demo/executive-briefing-demo.xlsx)
-- [Executive Briefing Demo Deck](outputs/executive-briefing-machine-demo/executive-briefing-demo.pptx)
-- [Executive Briefing Demo Summary](outputs/executive-briefing-machine-demo/briefing-summary.md)
-- [Executive Briefing Demo Run Report](outputs/executive-briefing-machine-demo/demo-run-report.md)
+## What is implemented
 
-## Workspace structure
+- live Slack adapter with advisory-aware filtering
+- live GitHub adapter for repo activity and roadmap issues
+- reusable orchestration and synthesis pipeline under `src/executive-briefing/`
+- native Excel and PowerPoint artifact generation
+- scheduled runner entrypoint
+- tests covering ingestion, synthesis, and artifact creation
 
-```text
-docs/
-  workflows/
-outputs/
-  product-strategy/
-scripts/
-PLAN.md
-README.md
-```
+## What is not implemented yet
 
-## Recommended use
+- live KPI ingestion from a warehouse, BI tool, or source-of-truth spreadsheet
+- live leadership notes from a dedicated thread or document source
+- live Teams ingestion
+- live `computer-use` capture for dashboards and internal portals
+- outbound Slack/Teams delivery of finished briefing updates
 
-1. Read the matrix and positioning docs to align on packaging.
-2. Use the workflow specs as implementation briefs or sales/demo guides.
-3. Use the workbook for prioritization and launch scoring.
-4. Use the deck for stakeholder reviews, demos, or GTM alignment.
+## Suggested GitHub Pages setup
+
+This repo now includes a static landing page at:
+
+- [docs/index.html](docs/index.html)
+
+If you enable GitHub Pages from the `docs/` folder on `main`, this can act as the public demo page linked from a Medium article or launch post.
