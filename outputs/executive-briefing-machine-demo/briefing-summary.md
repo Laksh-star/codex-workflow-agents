@@ -1,17 +1,17 @@
 # Executive Briefing Summary
 
-Generated on: 2026-04-17
+Generated on: 2026-04-18
 Period: May 2026 to Jun 2026
 
 ## Headline
 
-Growth and efficiency improved this month, with reliability still the main watch item.
+Revenue quality and operating discipline improved this month, with delivery execution still the main watch item.
 
 ## Narrative
 
-- ARR reached $1688k and qualified pipeline rose to $1335k, keeping the Q3 growth story credible.
-- Net burn improved to $226k and NRR moved to 114%, which supports the efficiency narrative leadership wants to maintain.
-- The main risk remains mobile reliability and enterprise deal friction around security review turnaround.
+- ARR reached $869k and qualified pipeline rose to $772k, supporting the story that the firm is converting bespoke work into a more repeatable advisory business.
+- Net burn improved to $121k and NRR moved to 111%, which reinforces the case for disciplined growth without overextending delivery capacity.
+- The main execution risk is one client workshop is blocked until the data room access issue is resolved. • Delivery confidence remains high, but the team needs a named owner for exec stakeholder scheduling. • If we do not unblock the security questionnaire by Friday, the healthcare advisory kickoff will slip by at least one week.
 
 ## Highlights
 
@@ -22,11 +22,10 @@ Growth and efficiency improved this month, with reliability still the main watch
 ## Risks
 
 - C09MXSVB2HH: • One client workshop is blocked until the data room access issue is resolved. • Delivery confidence remains high, but the team needs a named owner for exec stakeholder scheduling. • If we do not unblock the security questionnaire by Friday, the healthcare advisory kickoff will slip by at least one week.
-- Open issue #5: Risk: Live channel quality can overwhelm executive-briefing signal
-- Open issue #4: Future idea: Add client-ready QBR output mode
+- Risk #5: Risk: Live channel quality can overwhelm executive-briefing signal
 
 ## Immediate asks
 
 - C09MXSVB2HH: • Need approval to pull one additional analytics contractor into the customer-ops workstream for 3 weeks. • Need legal support on the enterprise MSA backlog to protect April revenue timing. • Please confirm whether we want the board narrative to emphasize pipeline quality, delivery readiness, or margin improvement first.
-- The board will care most about whether enterprise pipeline supports the Q3 revenue target.
-- Keep net burn under $230k while continuing to invest in product reliability.
+- The board narrative should show that Directing Business Consulting Advisory is becoming a repeatable boutique AI advisory business, not a collection of one-off projects.
+- Emphasize conversion from founder-led consulting into packaged offerings: chief-of-staff systems, GTM operating cadence, and AI-enabled advisory retainers.

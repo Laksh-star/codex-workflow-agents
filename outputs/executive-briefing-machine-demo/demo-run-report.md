@@ -1,7 +1,7 @@
 # Demo Run Report
 
 Demo: Executive Briefing Machine
-Run date: 2026-04-17
+Run date: 2026-04-18
 
 ## What this implements from the integrated architecture
 
@@ -36,7 +36,7 @@ Run date: 2026-04-17
 
 ## Derived headline
 
-Growth and efficiency improved this month, with reliability still the main watch item.
+Revenue quality and operating discipline improved this month, with delivery execution still the main watch item.
 
 ## Caveat
 

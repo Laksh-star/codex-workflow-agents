@@ -32,6 +32,13 @@ function signed(value, suffix = "") {
   return `${prefix}${value}${suffix}`;
 }
 
+function shortenText(text) {
+  return String(text || "")
+    .replace(/^[A-Z0-9-]+:\s*/i, "")
+    .replace(/^[-*•]\s*/g, "")
+    .trim();
+}
+
 function takeDistinct(limit, ...groups) {
   const seen = new Set();
   const items = [];
@@ -175,6 +182,8 @@ export function synthesizeExecutiveBriefing(context, { generatedOn = "2026-04-17
     ...leadershipNotes.slice(0, 2),
   ];
 
+  const primaryRisk = shortenText(risks[0] || "");
+
   const metrics = [
     { label: "ARR", current: `$${latest.arrK}k`, delta: signed(delta(latest.arrK, previous.arrK), "k vs last month"), tone: "positive" },
     {
@@ -204,14 +213,16 @@ export function synthesizeExecutiveBriefing(context, { generatedOn = "2026-04-17
   ];
 
   const headline =
-    latest.arrK > previous.arrK && latest.netBurnK < previous.netBurnK && latest.sev1Incidents < previous.sev1Incidents
-      ? "Growth and efficiency improved this month, with reliability still the main watch item."
-      : "Operating momentum is mixed and requires tighter follow-through.";
+    latest.arrK > previous.arrK && latest.netBurnK < previous.netBurnK && latest.sev1Incidents <= previous.sev1Incidents
+      ? "Revenue quality and operating discipline improved this month, with delivery execution still the main watch item."
+      : "Operating momentum is mixed and requires tighter commercial and delivery follow-through.";
 
   const narrative = [
-    `ARR reached $${latest.arrK}k and qualified pipeline rose to $${latest.qualifiedPipelineK}k, keeping the Q3 growth story credible.`,
-    `Net burn improved to $${latest.netBurnK}k and NRR moved to ${latest.nrrPct}%, which supports the efficiency narrative leadership wants to maintain.`,
-    `The main risk remains mobile reliability and enterprise deal friction around security review turnaround.`,
+    `ARR reached $${latest.arrK}k and qualified pipeline rose to $${latest.qualifiedPipelineK}k, supporting the story that the firm is converting bespoke work into a more repeatable advisory business.`,
+    `Net burn improved to $${latest.netBurnK}k and NRR moved to ${latest.nrrPct}%, which reinforces the case for disciplined growth without overextending delivery capacity.`,
+    primaryRisk
+      ? `The main execution risk is ${primaryRisk.charAt(0).toLowerCase()}${primaryRisk.slice(1)}`
+      : "The main execution risk is preserving delivery quality while enterprise-style opportunities move into procurement and kickoff.",
   ];
 
   return {

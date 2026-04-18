@@ -126,7 +126,11 @@ test("collects live GitHub context when token-backed adapter is provided", async
     ],
     [
       "https://api.github.com/repos/Laksh-star/codex-workflow-agents/issues?state=open&sort=updated&direction=desc&per_page=10",
-      [{ number: 9, title: "Fix flaky workbook preview" }],
+      [
+        { number: 9, title: "Fix flaky workbook preview" },
+        { number: 10, title: "Future idea: Add client-ready QBR output mode" },
+        { number: 11, title: "Risk: Live channel quality can overwhelm executive-briefing signal" },
+      ],
     ],
   ]);
 
@@ -152,13 +156,15 @@ test("collects live GitHub context when token-backed adapter is provided", async
   assert.ok(context.items.some((item) => item.text.includes("Merged PR #12")));
   assert.ok(context.items.some((item) => item.text.includes("Open issue #9")));
   assert.ok(context.items.some((item) => item.text.includes("Open PR #14")));
+  assert.ok(context.items.some((item) => item.kind === "delivery_note" && item.text.includes("Future idea #10")));
+  assert.ok(context.items.some((item) => item.kind === "risk" && item.text.includes("Risk #11")));
   assert.ok(context.integrations.some((integration) => integration.status === "implemented" && integration.source === "github"));
 });
 
 test("synthesizes the executive briefing narrative", async () => {
   const context = await collectSampleExecutiveBriefingContext({ inputDir });
   const briefing = synthesizeExecutiveBriefing(context, { generatedOn: "2026-04-17" });
-  assert.match(briefing.headline, /Growth and efficiency improved/);
+  assert.match(briefing.headline, /Revenue quality and operating discipline improved/);
   assert.equal(briefing.metrics[0].label, "ARR");
   assert.equal(briefing.highlights.length, 3);
   assert.equal(briefing.risks.length, 3);
@@ -181,7 +187,7 @@ test("generates workbook, deck, summary, and report artifacts", async () => {
   const summaryText = await fs.readFile(result.paths.summaryPath, "utf8");
   const reportText = await fs.readFile(result.paths.reportPath, "utf8");
   assert.match(summaryText, /Executive Briefing Summary/);
-  assert.match(summaryText, /Growth and efficiency improved this month/);
+  assert.match(summaryText, /Revenue quality and operating discipline improved this month/);
   assert.match(reportText, /connector-ready adapters/);
   assert.match(reportText, /computer-use/);
 });

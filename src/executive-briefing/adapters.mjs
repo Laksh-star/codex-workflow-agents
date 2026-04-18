@@ -210,6 +210,17 @@ function itemSummary(prefix, entity) {
   return `${prefix} #${entity.number}: ${entity.title}`;
 }
 
+function classifyGitHubIssue(issue) {
+  const title = String(issue?.title || "");
+  if (/^future idea:/i.test(title)) {
+    return { kind: "delivery_note", section: "GitHub Future Ideas", prefix: "Future idea" };
+  }
+  if (/^risk:/i.test(title)) {
+    return { kind: "risk", section: "GitHub Risks", prefix: "Risk" };
+  }
+  return { kind: "risk", section: "GitHub Open Issues", prefix: "Open issue" };
+}
+
 export function parseSlackChannelIds(value) {
   if (Array.isArray(value)) {
     return value.map((item) => String(item).trim()).filter(Boolean);
@@ -519,14 +530,17 @@ export function createGitHubApiAdapter({
           section: "GitHub Merged Pulls",
           text: itemSummary("Merged PR", pull),
         })),
-        ...openIssues.map((issue) => ({
-          adapterId: id,
-          source,
-          mode,
-          kind: "risk",
-          section: "GitHub Open Issues",
-          text: itemSummary("Open issue", issue),
-        })),
+        ...openIssues.map((issue) => {
+          const classification = classifyGitHubIssue(issue);
+          return {
+            adapterId: id,
+            source,
+            mode,
+            kind: classification.kind,
+            section: classification.section,
+            text: itemSummary(classification.prefix, issue),
+          };
+        }),
         ...openPulls.slice(0, 3).map((pull) => ({
           adapterId: id,
           source,
