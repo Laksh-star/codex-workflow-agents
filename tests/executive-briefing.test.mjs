@@ -56,6 +56,10 @@ test("collects live Slack context when token-backed adapter is provided", async 
             text: ":satellite_antenna: Pipeline digest processed: 1800 items. Thread below with ranked opportunities.",
           },
           { ts: "1713420000.000425", text: "https://x.com/claudeai/status/2045248224659644654?s=20" },
+          {
+            ts: "1713420000.000350",
+            text: "_DEMO / Synthetic operating update_ Customer signal: The retail client wants burn, renewal risk, and implementation blockers in one dashboard. *Sent using* ChatGPT",
+          },
           { ts: "1713420000.000300", text: "Need approval on the enterprise discount by EOD." },
           { ts: "1713420000.000200", text: "Growth experiment beat signup target by 18% this week." },
         ],
@@ -93,9 +97,17 @@ test("collects live Slack context when token-backed adapter is provided", async 
   assert.ok(context.items.some((item) => item.text.includes("exec-updates: Growth experiment beat signup target")));
   assert.ok(context.items.some((item) => item.text.includes("eng-leadership: Blocked on mobile crash fix")));
   assert.ok(context.items.some((item) => item.kind === "ask" && item.text.includes("Need approval")));
+  assert.ok(
+    context.items.some(
+      (item) =>
+        item.kind === "highlight" &&
+        item.text.includes("exec-updates: The retail client wants burn, renewal risk, and implementation blockers in one dashboard."),
+    ),
+  );
   assert.ok(context.items.every((item) => !item.text.includes("has joined the channel")));
   assert.ok(context.items.every((item) => !item.text.includes("Pipeline digest processed")));
   assert.ok(context.items.every((item) => !item.text.includes("https://x.com/claudeai")));
+  assert.ok(context.items.every((item) => !item.text.includes("Sent using")));
   assert.ok(context.integrations.some((integration) => integration.status === "implemented" && integration.source === "slack"));
 });
 

@@ -28,7 +28,7 @@ Run date: 2026-04-17
 
 ## Integration status
 
-- slack: implemented (Live Slack API adapter for 2 channel(s))
+- slack: implemented (Live Slack API adapter for 1 channel(s))
 - github: implemented (Live GitHub API adapter for Laksh-star/codex-workflow-agents)
 - local-notes: implemented (Local document ingestion)
 - kpi-file: implemented (Spreadsheet/file ingestion)

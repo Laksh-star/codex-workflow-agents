@@ -232,6 +232,8 @@ function normalizeSlackText(text) {
     .replace(/&amp;/g, "&")
     .replace(/&lt;/g, "<")
     .replace(/&gt;/g, ">")
+    .replace(/\*Sent using\*\s*ChatGPT/gi, "")
+    .replace(/Sent using\s+ChatGPT/gi, "")
     .replace(/\s+/g, " ")
     .trim();
 }
@@ -242,8 +244,41 @@ const slackBusinessPattern =
   /\b(arr|nrr|pipeline|revenue|renewal|churn|customer|enterprise|deal|burn|budget|forecast|launch|shipping|release|rollout|activation|signup|trial|growth|retention|reliability|roadmap|support|legal|security)\b/i;
 const slackNoisePattern =
   /\b(has joined the channel|joined the channel|left the channel|invite @|set the channel|renamed the channel|archived the channel|unarchived the channel|thread below|processed:\s*\d|data scanned:|window:|verticals covered:)\b/i;
+const slackStructuredSectionPattern =
+  /^(?:_?DEMO \/ Synthetic operating update_?\s*)?(Client delivery status|Revenue and pipeline readout|Customer signal|Risk watch|Immediate asks(?: for leadership)?):\s*/i;
 
-function classifySlackMessage(text) {
+function parseSlackMessageContext(text) {
+  const cleaned = text
+    .replace(/^_?DEMO \/ Synthetic operating update_?\s*/i, "")
+    .replace(/\*Sent using\*\s*ChatGPT/gi, "")
+    .replace(/Sent using\s+ChatGPT/gi, "")
+    .trim();
+
+  const sectionMatch = cleaned.match(slackStructuredSectionPattern);
+  if (!sectionMatch) {
+    return { text: cleaned, sectionHint: null };
+  }
+
+  return {
+    text: cleaned.slice(sectionMatch[0].length).trim(),
+    sectionHint: sectionMatch[1].toLowerCase(),
+  };
+}
+
+function classifySlackMessage(text, sectionHint = null) {
+  if (sectionHint?.startsWith("risk watch")) {
+    return "risk";
+  }
+  if (sectionHint?.startsWith("immediate asks")) {
+    return "ask";
+  }
+  if (
+    sectionHint?.startsWith("client delivery status") ||
+    sectionHint?.startsWith("revenue and pipeline readout") ||
+    sectionHint?.startsWith("customer signal")
+  ) {
+    return "highlight";
+  }
   if (slackRiskPattern.test(text)) {
     return "risk";
   }
@@ -278,7 +313,7 @@ function isSlackSystemMessage(message) {
   ].includes(subtype);
 }
 
-function scoreSlackMessage(message, text) {
+function scoreSlackMessage(message, text, sectionHint = null) {
   let score = 0;
   const isLinkOnly = /^(https?:\/\/\S+|www\.\S+)$/i.test(text);
   const alphaChars = (text.match(/[a-z]/gi) || []).length;
@@ -292,6 +327,7 @@ function scoreSlackMessage(message, text) {
   if (slackRiskPattern.test(text)) score += 3;
   if (slackAskPattern.test(text)) score += 2;
   if (slackBusinessPattern.test(text)) score += 2;
+  if (sectionHint) score += 4;
   if (slackNoisePattern.test(text)) score -= 6;
   if (text.length > 450) score -= 3;
   if ((text.match(/\n/g) || []).length > 4) score -= 2;
@@ -370,13 +406,14 @@ export function createSlackApiAdapter({
         .flatMap(({ channel, messages }) =>
           messages
             .map((message) => {
-              const text = normalizeSlackText(message.text);
-              const score = scoreSlackMessage(message, text);
+              const normalizedText = normalizeSlackText(message.text);
+              const { text, sectionHint } = parseSlackMessageContext(normalizedText);
+              const score = scoreSlackMessage(message, text, sectionHint);
               if (!text || score < 2) {
                 return null;
               }
 
-              const kind = classifySlackMessage(text);
+              const kind = classifySlackMessage(text, sectionHint);
               return {
                 adapterId: id,
                 source,
