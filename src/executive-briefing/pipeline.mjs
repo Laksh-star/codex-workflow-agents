@@ -3,8 +3,12 @@ import {
   collectFromAdapters,
   createBulletListAdapter,
   createCsvKpiAdapter,
+  createGitHubApiAdapter,
   createManualUiCaptureAdapter,
   createMarkdownSectionAdapter,
+  parseGitHubRemote,
+  parseSlackChannelIds,
+  createSlackApiAdapter,
 } from "./adapters.mjs";
 
 export function monthLabel(value) {
@@ -62,6 +66,71 @@ export function createSampleExecutiveBriefingAdapters({ inputDir, uiCapturePath 
 
 export async function collectSampleExecutiveBriefingContext({ inputDir, uiCapturePath = null }) {
   return collectFromAdapters(createSampleExecutiveBriefingAdapters({ inputDir, uiCapturePath }));
+}
+
+export function createIntegratedExecutiveBriefingAdapters({
+  inputDir,
+  uiCapturePath = null,
+  slack = {},
+  github = {},
+} = {}) {
+  const slackChannels = slack.channels || parseSlackChannelIds(slack.channelIds);
+  const hasLiveSlack = Boolean(slack.token && slackChannels.length);
+  const remoteOwnerRepo = parseGitHubRemote(github.remoteUrl || "");
+  const owner = github.owner || remoteOwnerRepo?.owner;
+  const repo = github.repo || remoteOwnerRepo?.repo;
+  const hasLiveGitHub = Boolean(github.token && owner && repo);
+
+  return [
+    hasLiveSlack
+      ? createSlackApiAdapter({
+          id: "slack-live",
+          token: slack.token,
+          channels: slackChannels,
+          apiBaseUrl: slack.apiBaseUrl,
+          fetchImpl: slack.fetchImpl,
+        })
+      : createMarkdownSectionAdapter({
+          id: "slack-sample",
+          source: "slack",
+          filePath: path.join(inputDir, "slack_updates.md"),
+          mode: "sample",
+          sectionKindMap: { Highlights: "highlight", Risks: "risk", Asks: "ask" },
+        }),
+    hasLiveGitHub
+      ? createGitHubApiAdapter({
+          id: "github-live",
+          owner,
+          repo,
+          token: github.token,
+          apiBaseUrl: github.apiBaseUrl,
+          fetchImpl: github.fetchImpl,
+        })
+      : createMarkdownSectionAdapter({
+          id: "github-sample",
+          source: "github",
+          filePath: path.join(inputDir, "github_updates.md"),
+          mode: "sample",
+          sectionKindMap: { Shipping: "highlight", "Open Risks": "risk", "Delivery Notes": "delivery_note" },
+        }),
+    createBulletListAdapter({
+      id: "leadership-notes",
+      source: "local-notes",
+      filePath: path.join(inputDir, "leadership_notes.md"),
+      mode: "sample",
+    }),
+    createCsvKpiAdapter({
+      id: "kpi-sheet",
+      source: "kpi-file",
+      filePath: path.join(inputDir, "kpis.csv"),
+      mode: "sample",
+    }),
+    createManualUiCaptureAdapter({ id: "dashboard-ui", filePath: uiCapturePath }),
+  ];
+}
+
+export async function collectIntegratedExecutiveBriefingContext(options = {}) {
+  return collectFromAdapters(createIntegratedExecutiveBriefingAdapters(options));
 }
 
 export function synthesizeExecutiveBriefing(context, { generatedOn = "2026-04-17" } = {}) {

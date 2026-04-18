@@ -1,7 +1,7 @@
 # Demo Run Report
 
 Demo: Executive Briefing Machine
-Run date: 2026-04-17
+Run date: 2026-04-18
 
 ## What this implements from the integrated architecture
 
@@ -40,4 +40,4 @@ Growth and efficiency improved this month, with reliability still the main watch
 
 ## Caveat
 
-This is a connector-ready prototype that still uses sample local inputs instead of live Slack, GitHub, dashboard, or automation runs.
+This is a connector-ready prototype that can use live Slack and GitHub inputs when credentials are available, but it still falls back to sample local inputs for missing sources. Dashboard and `computer-use` capture remain stubbed.

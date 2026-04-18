@@ -398,7 +398,7 @@ ${data.headline}
 
 ## Caveat
 
-This is a connector-ready prototype that still uses sample local inputs instead of live Slack, GitHub, dashboard, or automation runs.
+This is a connector-ready prototype that can use live Slack and GitHub inputs when credentials are available, but it still falls back to sample local inputs for missing sources. Dashboard and \`computer-use\` capture remain stubbed.
 `;
   await fs.mkdir(path.dirname(reportPath), { recursive: true });
   await fs.writeFile(reportPath, report, "utf8");

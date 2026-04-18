@@ -20,17 +20,21 @@ This workspace turns the product strategy in [PLAN.md](PLAN.md) into reusable op
 
 The repo now implements a meaningful part of the integrated target architecture for the `Executive Briefing Machine`:
 
-- connector-ready adapters for Slack-like updates, GitHub-like updates, KPI files, and local notes
+- connector-ready adapters for Slack updates, GitHub updates, KPI files, and local notes
+- live Slack API ingestion when `SLACK_BOT_TOKEN` and `SLACK_CHANNEL_IDS` are present
+- live GitHub API ingestion when `GITHUB_TOKEN` is present
 - a `computer-use`-mapped adapter stub for UI-only sources
 - a reusable orchestration and synthesis layer under `src/executive-briefing/`
 - native editable `Excel` and `PowerPoint` outputs
-- a test suite that validates ingestion, synthesis, and artifact generation
+- a scheduled runner entrypoint under `scripts/run_scheduled_executive_briefing.mjs`
+- a test suite that validates ingestion, synthesis, and artifact generation across sample and live-backed adapter paths
 
 What is still not implemented:
 
-- live Slack, Teams, or GitHub connector calls from repo code
+- live Teams connector calls from repo code
 - live `computer-use` capture sessions
-- scheduled automation runs wired into the pipeline
+- outbound Slack or Teams posting from the generated briefing
+- warehouse or dashboard-native KPI ingestion beyond local files
 
 ## Included assets
 
@@ -54,10 +58,21 @@ Run the builders to regenerate the editable artifacts:
 ```bash
 ./scripts/build_all.sh
 npm run build:executive-demo
+npm run run:scheduled-executive-demo
 npm test
 ```
 
 Outputs are written to `outputs/product-strategy/`.
+
+The executive briefing scripts optionally use these environment variables for live context:
+
+```bash
+SLACK_BOT_TOKEN=...
+SLACK_CHANNEL_IDS=C12345678,C23456789
+GITHUB_TOKEN=...
+GITHUB_OWNER=Laksh-star
+GITHUB_REPO=codex-workflow-agents
+```
 
 - [Workflow Prioritization Workbook](outputs/product-strategy/codex-non-coding-workflows.xlsx)
 - [Strategy Deck](outputs/product-strategy/codex-non-coding-workflows.pptx)

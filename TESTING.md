@@ -134,3 +134,46 @@ Open these files in Office-native apps and do one manual acceptance pass:
 - [codex-non-coding-workflows.pptx](outputs/product-strategy/codex-non-coding-workflows.pptx)
 
 The highest-value manual check is the workbook summary sheet, since that is where the preview/runtime discrepancy showed up.
+
+## Executive Briefing Pipeline Verification
+
+Test date: 2026-04-18
+
+### Overall result
+
+- Connector-ready pipeline: pass
+- Live Slack adapter path: pass in test with stubbed API responses
+- Live GitHub adapter path: pass in test with stubbed API responses
+- Scheduled runner entrypoint: pass
+- Executive briefing artifacts: pass
+
+### Commands run
+
+```bash
+npm test
+node scripts/build_executive_briefing_demo.mjs
+node scripts/run_scheduled_executive_briefing.mjs
+```
+
+### What was verified
+
+1. The Node test suite passed `7` tests covering:
+   - sample context collection
+   - GitHub remote parsing
+   - Slack channel ID parsing
+   - live Slack ingestion with injected API responses
+   - live GitHub ingestion with injected API responses
+   - executive briefing synthesis
+   - workbook, deck, summary, and report generation
+2. `node scripts/build_executive_briefing_demo.mjs` completed successfully and regenerated:
+   - [executive-briefing-demo.xlsx](outputs/executive-briefing-machine-demo/executive-briefing-demo.xlsx)
+   - [executive-briefing-demo.pptx](outputs/executive-briefing-machine-demo/executive-briefing-demo.pptx)
+   - [briefing-summary.md](outputs/executive-briefing-machine-demo/briefing-summary.md)
+   - [demo-run-report.md](outputs/executive-briefing-machine-demo/demo-run-report.md)
+3. `node scripts/run_scheduled_executive_briefing.mjs` completed successfully and regenerated the same artifact set plus:
+   - [narrative_plan.md](outputs/executive-briefing-machine-demo/narrative_plan.md)
+
+### Current caveat
+
+- The live Slack and live GitHub paths are verified through deterministic injected responses in tests. They still depend on valid runtime credentials and source access at execution time.
+- `computer-use` remains represented by a manual UI-capture stub rather than a live automated capture flow.

@@ -4,6 +4,7 @@
   "type": "module",
   "scripts": {
     "build:executive-demo": "node scripts/build_executive_briefing_demo.mjs",
+    "run:scheduled-executive-demo": "node scripts/run_scheduled_executive_briefing.mjs",
     "test": "node --test tests/*.test.mjs"
   }
 }

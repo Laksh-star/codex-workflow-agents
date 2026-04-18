@@ -16,23 +16,28 @@ async function getRemoteUrl(cwd) {
 }
 
 const rootDir = path.resolve(path.dirname(new URL(import.meta.url).pathname), "..");
+const slack = {
+  token: process.env.SLACK_BOT_TOKEN || "",
+  channelIds: parseSlackChannelIds(process.env.SLACK_CHANNEL_IDS || ""),
+  apiBaseUrl: process.env.SLACK_API_BASE_URL || undefined,
+};
+const github = {
+  token: process.env.GITHUB_TOKEN || "",
+  owner: process.env.GITHUB_OWNER || "",
+  repo: process.env.GITHUB_REPO || "",
+  remoteUrl: await getRemoteUrl(rootDir),
+  apiBaseUrl: process.env.GITHUB_API_BASE_URL || undefined,
+};
+
 const result = await runExecutiveBriefingDemo({
   rootDir,
-  slack: {
-    token: process.env.SLACK_BOT_TOKEN || "",
-    channelIds: parseSlackChannelIds(process.env.SLACK_CHANNEL_IDS || ""),
-    apiBaseUrl: process.env.SLACK_API_BASE_URL || undefined,
-  },
-  github: {
-    token: process.env.GITHUB_TOKEN || "",
-    owner: process.env.GITHUB_OWNER || "",
-    repo: process.env.GITHUB_REPO || "",
-    remoteUrl: await getRemoteUrl(rootDir),
-    apiBaseUrl: process.env.GITHUB_API_BASE_URL || undefined,
-  },
+  slack,
+  github,
+  generatedOn: new Date().toISOString().slice(0, 10),
 });
 
 console.log(result.paths.workbookPath);
 console.log(result.paths.deckPath);
 console.log(result.paths.summaryPath);
 console.log(result.paths.reportPath);
+console.log(result.paths.narrativePath);

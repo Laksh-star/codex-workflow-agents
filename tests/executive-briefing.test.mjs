@@ -5,7 +5,12 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { FileBlob, PresentationFile, SpreadsheetFile } from "@oai/artifact-tool";
 import { runExecutiveBriefingDemo } from "../src/executive-briefing/demo.mjs";
-import { collectSampleExecutiveBriefingContext, synthesizeExecutiveBriefing } from "../src/executive-briefing/pipeline.mjs";
+import { parseGitHubRemote, parseSlackChannelIds } from "../src/executive-briefing/adapters.mjs";
+import {
+  collectIntegratedExecutiveBriefingContext,
+  collectSampleExecutiveBriefingContext,
+  synthesizeExecutiveBriefing,
+} from "../src/executive-briefing/pipeline.mjs";
 
 const rootDir = path.resolve(path.dirname(new URL(import.meta.url).pathname), "..");
 const inputDir = path.join(rootDir, "demo", "executive-briefing-machine", "inputs");
@@ -18,6 +23,113 @@ test("collects connector-ready sample context", async () => {
   assert.ok(context.integrations.some((integration) => integration.source === "slack"));
   assert.ok(context.integrations.some((integration) => integration.source === "github"));
   assert.ok(context.integrations.some((integration) => integration.source === "computer-use"));
+});
+
+test("parses GitHub remote URLs", () => {
+  assert.deepEqual(parseGitHubRemote("https://github.com/Laksh-star/codex-workflow-agents.git"), {
+    owner: "Laksh-star",
+    repo: "codex-workflow-agents",
+  });
+  assert.deepEqual(parseGitHubRemote("git@github.com:Laksh-star/codex-workflow-agents.git"), {
+    owner: "Laksh-star",
+    repo: "codex-workflow-agents",
+  });
+});
+
+test("parses Slack channel ids from env-style strings", () => {
+  assert.deepEqual(parseSlackChannelIds("C123,C456 C789"), ["C123", "C456", "C789"]);
+  assert.deepEqual(parseSlackChannelIds(["C111", " C222 "]), ["C111", "C222"]);
+});
+
+test("collects live Slack context when token-backed adapter is provided", async () => {
+  const fetchImpl = async (_url, options) => {
+    const { channel } = JSON.parse(options.body);
+    const responses = {
+      C123: {
+        ok: true,
+        messages: [
+          { ts: "1713420000.000300", text: "Need approval on the enterprise discount by EOD." },
+          { ts: "1713420000.000200", text: "Growth experiment beat signup target by 18% this week." },
+        ],
+      },
+      C456: {
+        ok: true,
+        messages: [
+          { ts: "1713420000.000400", text: "Blocked on mobile crash fix after a new sev-1 incident." },
+        ],
+      },
+    };
+
+    return {
+      ok: true,
+      status: 200,
+      statusText: "OK",
+      async json() {
+        return responses[channel] || { ok: true, messages: [] };
+      },
+    };
+  };
+
+  const context = await collectIntegratedExecutiveBriefingContext({
+    inputDir,
+    slack: {
+      token: "test-slack-token",
+      channels: [
+        { id: "C123", label: "exec-updates" },
+        { id: "C456", label: "eng-leadership" },
+      ],
+      fetchImpl,
+    },
+  });
+
+  assert.ok(context.items.some((item) => item.text.includes("exec-updates: Growth experiment beat signup target")));
+  assert.ok(context.items.some((item) => item.text.includes("eng-leadership: Blocked on mobile crash fix")));
+  assert.ok(context.items.some((item) => item.kind === "ask" && item.text.includes("Need approval")));
+  assert.ok(context.integrations.some((integration) => integration.status === "implemented" && integration.source === "slack"));
+});
+
+test("collects live GitHub context when token-backed adapter is provided", async () => {
+  const routes = new Map([
+    [
+      "https://api.github.com/repos/Laksh-star/codex-workflow-agents/pulls?state=closed&sort=updated&direction=desc&per_page=10",
+      [
+        { number: 12, title: "Ship connector-ready pipeline", merged_at: "2026-04-17T08:00:00Z" },
+        { number: 11, title: "Close old draft", merged_at: null },
+      ],
+    ],
+    [
+      "https://api.github.com/repos/Laksh-star/codex-workflow-agents/pulls?state=open&sort=updated&direction=desc&per_page=10",
+      [{ number: 14, title: "Add automation wiring" }],
+    ],
+    [
+      "https://api.github.com/repos/Laksh-star/codex-workflow-agents/issues?state=open&sort=updated&direction=desc&per_page=10",
+      [{ number: 9, title: "Fix flaky workbook preview" }],
+    ],
+  ]);
+
+  const fetchImpl = async (url) => ({
+    ok: true,
+    status: 200,
+    statusText: "OK",
+    async json() {
+      return routes.get(url) || [];
+    },
+  });
+
+  const context = await collectIntegratedExecutiveBriefingContext({
+    inputDir,
+    github: {
+      token: "test-token",
+      owner: "Laksh-star",
+      repo: "codex-workflow-agents",
+      fetchImpl,
+    },
+  });
+
+  assert.ok(context.items.some((item) => item.text.includes("Merged PR #12")));
+  assert.ok(context.items.some((item) => item.text.includes("Open issue #9")));
+  assert.ok(context.items.some((item) => item.text.includes("Open PR #14")));
+  assert.ok(context.integrations.some((integration) => integration.status === "implemented" && integration.source === "github"));
 });
 
 test("synthesizes the executive briefing narrative", async () => {

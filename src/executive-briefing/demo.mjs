@@ -1,6 +1,6 @@
 import path from "node:path";
 import { buildDeckFile, buildWorkbook, writeNarrativePlan, writeReport, writeSummary } from "./artifacts.mjs";
-import { collectSampleExecutiveBriefingContext, synthesizeExecutiveBriefing } from "./pipeline.mjs";
+import { collectIntegratedExecutiveBriefingContext, synthesizeExecutiveBriefing } from "./pipeline.mjs";
 
 export async function runExecutiveBriefingDemo({
   rootDir,
@@ -8,6 +8,8 @@ export async function runExecutiveBriefingDemo({
   outputDir = path.join(rootDir, "outputs", "executive-briefing-machine-demo"),
   uiCapturePath = null,
   generatedOn = "2026-04-17",
+  slack = {},
+  github = {},
 } = {}) {
   const workbookPath = path.join(outputDir, "executive-briefing-demo.xlsx");
   const deckPath = path.join(outputDir, "executive-briefing-demo.pptx");
@@ -15,7 +17,7 @@ export async function runExecutiveBriefingDemo({
   const reportPath = path.join(outputDir, "demo-run-report.md");
   const narrativePath = path.join(outputDir, "narrative_plan.md");
 
-  const context = await collectSampleExecutiveBriefingContext({ inputDir, uiCapturePath });
+  const context = await collectIntegratedExecutiveBriefingContext({ inputDir, uiCapturePath, slack, github });
   const data = synthesizeExecutiveBriefing(context, { generatedOn });
 
   await buildWorkbook(data, workbookPath);
