@@ -1,42 +1,72 @@
-# Codex Workflow Agents
+<p align="center">
+  <a href="https://medium.com/@LakshmiNarayana_U/what-the-latest-codex-can-actually-do-live-slack-live-github-automations-and-editable-outputs-19aa79188577">
+    <img src="https://img.shields.io/badge/Medium-Read%20the%20article-12100E?style=for-the-badge&logo=medium&logoColor=white" alt="Read the Medium article" />
+  </a>
+  <a href="https://laksh-star.github.io/codex-workflow-agents/">
+    <img src="https://img.shields.io/badge/GitHub%20Pages-Open%20the%20landing%20page-2563EB?style=for-the-badge&logo=githubpages&logoColor=white" alt="Open the landing page" />
+  </a>
+  <a href="demo/executive-briefing-machine/README.md">
+    <img src="https://img.shields.io/badge/Workflow-Executive%20Briefing%20Machine-0F766E?style=for-the-badge" alt="Executive Briefing Machine" />
+  </a>
+</p>
 
-Working demo repo for a user-facing business workflow built on top of the latest Codex capabilities.
+<h1 align="center">Codex Workflow Agents</h1>
 
-[![Landing page preview](docs/landing-page-preview.png)](https://laksh-star.github.io/codex-workflow-agents/)
+<p align="center">
+  Working demo repo for a user-facing business workflow built on top of the latest Codex capabilities.
+</p>
 
-The current repo centers on one live hybrid demo:
+<p align="center">
+  <strong>From coding assistant to workflow operator.</strong><br />
+  Live GitHub context, live-tested Slack signal, scheduled runs, and editable business outputs.
+</p>
+
+<p align="center">
+  <a href="https://laksh-star.github.io/codex-workflow-agents/">
+    <img src="docs/landing-page-preview.png" alt="Landing page preview" width="900" />
+  </a>
+</p>
+
+## What this repo is
+
+This repo centers on one working hybrid demo:
 
 - `Executive Briefing Machine`
 
-It combines:
+The demo storyline is based on **Directing Business Consulting Advisory**, a boutique AI consulting and advisory firm.
 
-- live Slack context
-- live GitHub context
-- curated business KPI data
-- curated leadership framing
+The workflow combines:
+
+- GitHub context from the live repo
+- a live-tested Slack path for advisory updates and operating signal
+- curated KPI data for business-quality narrative coherence
+- curated leadership notes for board and execution framing
 - scheduled reruns
 - editable Excel and PowerPoint outputs
 
-The current demo storyline is based on **Directing Business Consulting Advisory**, a boutique AI consulting and advisory firm.
+This is intentionally presented as a **hybrid workflow demo**: real enough to run and inspect, explicit about what is live, what is curated, and what is still future architecture.
+
+## Read first
+
+- [Published Medium article](https://medium.com/@LakshmiNarayana_U/what-the-latest-codex-can-actually-do-live-slack-live-github-automations-and-editable-outputs-19aa79188577)
+- [Landing page](https://laksh-star.github.io/codex-workflow-agents/)
+- [Architecture](docs/architecture.md)
+- [Executive Briefing Machine demo](demo/executive-briefing-machine/README.md)
+- [Setup](SETUP.md)
+- [Testing](TESTING.md)
 
 ## Demo status
 
-This repo is best understood as a **hybrid workflow demo**.
-
 | Source | Status | Purpose |
 | --- | --- | --- |
-| Slack | Live | Advisory updates, asks, blockers, customer signal |
 | GitHub | Live | PRs, issues, and roadmap signal |
+| Slack | Live-tested | Advisory updates, asks, blockers, customer signal |
 | KPI data | Curated | Boutique AI advisory operating metrics |
 | Leadership notes | Curated | Board and execution framing |
 | Teams | Stubbed | Not wired yet |
 | `computer-use` dashboards | Stubbed | Architectural path exists, live capture does not |
 
-This makes the repo useful and honest: it demonstrates a real workflow with live connectors where they matter most, while keeping the remaining business context curated for output quality.
-
-## What the demo produces
-
-Each run generates:
+## What each run produces
 
 - an editable Excel KPI pack
 - an editable PowerPoint briefing deck
@@ -50,22 +80,15 @@ Latest demo artifacts:
 - [Executive Briefing Demo Summary](outputs/executive-briefing-machine-demo/briefing-summary.md)
 - [Executive Briefing Demo Run Report](outputs/executive-briefing-machine-demo/demo-run-report.md)
 
-## Start here
-
-- [Landing page](https://laksh-star.github.io/codex-workflow-agents/)
-- [Architecture](docs/architecture.md)
-- [Executive Briefing Machine demo](demo/executive-briefing-machine/README.md)
-- [Setup](SETUP.md)
-- [Testing](TESTING.md)
-
 ## What is implemented
 
-- live Slack ingestion with consulting-aware filtering
 - live GitHub ingestion for merged PRs, open PRs, and roadmap issues
-- reusable orchestration and synthesis pipeline under `src/executive-briefing/`
+- a live-tested Slack path with consulting-aware filtering and classification
+- reusable orchestration and synthesis logic under `src/executive-briefing/`
 - scheduled runner for recurring briefing refreshes
 - editable Excel and PowerPoint generation
-- integration tests for ingestion, synthesis, and output generation
+- tests for ingestion, synthesis, and artifact generation
+- public demo packaging through docs, landing page, and setup/testing notes
 
 ## What is not implemented yet
 
@@ -110,7 +133,7 @@ tests/
 
 ## Additional context
 
-The original broader strategy package for non-coding workflow agents is still included in the repo:
+The original broader strategy package for non-coding workflow agents is still included:
 
 - [Use Case Matrix](docs/use-case-matrix.md)
 - [Positioning](docs/positioning.md)
@@ -122,4 +145,4 @@ The original broader strategy package for non-coding workflow agents is still in
 
 The static landing page lives at [docs/index.html](docs/index.html).
 
-If GitHub Pages is enabled for the `docs/` folder on `main`, that page can be used as the public entry point for articles, launch posts, or demos.
+If GitHub Pages is enabled for the `docs/` folder on `main`, that page works as the public entry point for the article, launch posts, or demo walkthroughs.
